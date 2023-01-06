@@ -11,36 +11,16 @@ a = [-0.357943798843941, 0.484847030772083, 0.280845417857238,
      0.120186265681394, 0.741851885697296, -0.550028826775126]
 
 
-def xd(h):
+def xd(h, name):
     x = np.array_split(h, len(h) / 3)
     fig = go.Figure()
     for i in range(0, len(x)):
         for j in range(i + 1, len(x)):
-            fig.add_trace(go.Scatter3d(x=[x[i][0], x[j][0]], y=[x[i][1], x[j][1]], z=[x[i][2], x[j][2]], mode='lines'))
+            fig.add_trace(go.Scatter3d(x=[x[i][0], x[j][0]], y=[x[i][1], x[j][1]], z=[x[i][2], x[j][2]], mode='lines',
+                                       line=dict(color='black', width=4)))
+    fig.update_layout(showlegend=False)
+    fig.update_scenes(xaxis_visible=False, yaxis_visible=False, zaxis_visible=False)
     # fig.show()
-    fig.write_html("8Ap6.html")
+    fig.write_html(name + ".html")
 
-
-# def xd2(h):
-#     x = np.array_split(h, len(h) / 3)
-#     plt.figure('SPLTV', figsize=(10, 5))
-#     custom = plt.subplot(121, projection='3d')
-#     for i in range(0, len(x)):
-#         for j in range(i + 1, len(x)):
-#             for k in range(j + 1, len(x)):
-#                 x1 = x[i]
-#                 y1 = x[j]
-#                 z1 = x[k]
-#                 custom.scatter(x1, y1, z1)
-#
-#                 # 1. create vertices from points
-#                 verts = [list(zip(x1, y1, z1))]
-#                 # 2. create 3d polygons and specify parameters
-#                 srf = Poly3DCollection(verts, alpha=0, facecolor='#800000')
-#                 # 3. add polygon to the figure (current axes)
-#                 plt.gca().add_collection3d(srf)
-#
-#     plt.show()
-
-xd(a)
-# xd2(a)
+# xd(a)

@@ -3,9 +3,11 @@ from math import e, pow
 import numpy as np
 import pygad
 
+from plot import xd
+
 gene_space = {'low': -1.5, 'high': 1.5}
-strength = 10
-size = 7
+strength = 6
+size = 5
 
 
 def calc3d(x):
@@ -22,10 +24,10 @@ def fitness_func(x, solution_idx=0):
     return -sum
 
 
-sol_per_pop = 100
+sol_per_pop = 200
 num_genes = size * 3
 ga_instance = pygad.GA(gene_space=gene_space,
-                       num_generations=100,
+                       num_generations=400,
                        num_parents_mating=int(sol_per_pop / 2),
                        fitness_func=fitness_func,
                        sol_per_pop=sol_per_pop,
@@ -43,4 +45,5 @@ print("Parameters of the best solution : {solution}".format(solution=solution))
 print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
 prediction = -fitness_func(solution)
 print("Predicted output based on the best solution : {prediction}".format(prediction=prediction))
-ga_instance.plot_fitness()
+ga_instance.plot_fitness(save_dir=f"A_PLOT_Size{size}strength{strength}")
+xd(solution, f"A_FIGURE_Size{size}strength{strength}")

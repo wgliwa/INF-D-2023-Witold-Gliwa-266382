@@ -2,7 +2,6 @@ from math import e, pow
 
 import numpy as np
 import pyswarms as ps
-from matplotlib import pyplot as plt
 from pyswarms.utils.plotters import plot_cost_history
 
 from plot import xd
@@ -37,7 +36,7 @@ optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=size * 3, option
 cost, pos = optimizer.optimize(f, iters=100, )
 cost_history = optimizer.cost_history
 final_best_pos = ps.global_best
-print(pos)
-xd(pos)
-plot_cost_history(cost_history)
-plt.show()
+xd(pos, f"PSO_FIGURE_Size{size}strength{strength}")
+plot = plot_cost_history(cost_history)
+fig = plot.get_figure()
+fig.savefig(f"PSO_PLOT_Size{size}strength{strength}.png")
