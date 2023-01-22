@@ -1,3 +1,4 @@
+import dataframe_image as dfi
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -14,34 +15,16 @@ def plot3d(h, name):
     fig.update_scenes(xaxis_visible=False, yaxis_visible=False, zaxis_visible=False)
     # fig.show()
     fig.write_html(f"photo/{name}.html")
+    # gif = GIF(gif_name=f'gif/{name}')
+    # three_d_scatter_rotate(gif, fig)
 
 
-def process_mistakes(what):
-    with open(what) as fp:
-        pso = fp.read()
-    contents = pso.split(';')
-    tmp = []
-    for i in range(0, len(contents), 7):
-        tmp.append(contents[i:i + 7])
-    df = pd.DataFrame(columns=['size', 'strength', 'best_pred', 'mean_time', 'min_time', 'max_time', 'best_pos'],
-                      data=tmp)
-    df = df.astype({'size': 'int', 'strength': 'int', 'best_pred': 'float', 'mean_time': 'float', 'min_time': 'float',
-                    'max_time': 'float', 'best_pos': 'object'})
-    return df
-
-
-with open("perfect_results.txt") as fp:
-    x = fp.read()
-contents = x.replace('\n', ' ').split(" ")
-tmp = []
-for i in range(0, len(contents), 3):
-    tmp.append(contents[i:i + 3])
-per_df = pd.DataFrame(columns=['size', 'strength', 'best_pred'], data=tmp)
-per_df = per_df.astype({'size': 'int', 'strength': 'int', 'best_pred': 'float'})
-pso_df = process_mistakes("pso_results.txt")
-gen_df = process_mistakes("gen_results.txt")
-best_pso = pso_df.nlargest(3, 'best_pred')
-best_gen = gen_df.nlargest(3, 'best_pred')
+pso_df = pd.read_csv("pso_results.csv", index_col=[0])
+gen_df = pd.read_csv("gen_results.csv", index_col=[0])
+per_df = pd.read_csv("perfect_results.csv", index_col=[0])
+pso_df.name = "PSO"
+gen_df.name = "GEN"
+per_df.name = "SCIENTIST"
 
 
 def plot2(what, name):
@@ -54,19 +37,35 @@ def plot2(what, name):
         plot3d(tmp, f"{name}_{r['size']}_{r['strength']}")
 
 
-def plot(what):
-    strengths = [3, 6, 10, 14]
+def plot(type, list):
     for j in strengths:
-        ax = pso_df[pso_df['strength'] == j].plot(x='size', y=what, title=f"strenght {j}, {what}")
-        gen_df[pso_df['strength'] == j].plot(ax=ax, x='size', y=what)
-        if what != 'mean_time':
-            per_df[pso_df['strength'] == j].plot(ax=ax, x='size', y=what)
-        ax.legend(["PSO", "GEN", "PERF"])
-        ax.figure.savefig(f"graphs/{what}/strenght{j}.png")
+        ax = list[0][list[0]['strength'] == j].plot(x='size', y=type, title=f"strenght {j}, {type}", label=list[0].name)
+        for i in list[1:]:
+            if type in i.columns:
+                i[i['strength'] == j].plot(ax=ax, x='size', y=type, label=i.name)
+        ax.figure.savefig(f"graphs/{type}/strenght{j}.png")
 
 
-#
-# plot('best_pred')
-# plot('mean_time')
+def table(list1):
+    list2 = []
+    for i in list1:
+        tmp = i.drop(columns=["best_pos", "min_time", "max_time", "mean_time"], errors='ignore') \
+            .pivot(index='size', columns='strength')
+        tmp.columns = tmp.columns.droplevel()
+        tmp.name = i.name
+        dfi.export(tmp, f"tables/{tmp.name}.png")
+        list2.append(tmp)
+    for i in list2[:-1]:
+        dfi.export(list2[-1] - i, f"tables/{i.name} - SCIENTIST.png")
+
+
+sizes = [*range(5, 12)]
+strengths = [3, 6, 10, 14]
+df_list = [pso_df, gen_df, per_df]
+best_pso = pso_df.loc[pso_df['strength'] == 3]
+best_gen = gen_df.loc[gen_df['strength'] == 3]
+# plot('best_pred', df_list)
+# plot('mean_time', df_list)
 plot2(best_pso, "PSO")
 plot2(best_gen, "GEN")
+# table(df_list)
