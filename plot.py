@@ -2,6 +2,7 @@ import dataframe_image as dfi
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from plotly_gif import three_d_scatter_rotate, GIF
 
 
 def plot3d(h, name):
@@ -15,16 +16,20 @@ def plot3d(h, name):
     fig.update_scenes(xaxis_visible=False, yaxis_visible=False, zaxis_visible=False)
     # fig.show()
     fig.write_html(f"photo/{name}.html")
-    # gif = GIF(gif_name=f'gif/{name}')
-    # three_d_scatter_rotate(gif, fig)
+    gif = GIF(gif_name=f'gif/{name}')
+    three_d_scatter_rotate(gif, fig)
 
 
 pso_df = pd.read_csv("pso_results.csv", index_col=[0])
 gen_df = pd.read_csv("gen_results.csv", index_col=[0])
 per_df = pd.read_csv("perfect_results.csv", index_col=[0])
-pso_df.name = "PSO"
+psoL_df = pd.read_csv("xd.csv", index_col=[0])
+gen2_df = pd.read_csv("gen2.csv", index_col=[0])
+pso_df.name = "PSO_G"
 gen_df.name = "GEN"
 per_df.name = "SCIENTIST"
+psoL_df.name = "PSO_L"
+gen2_df.name = "GEN2"
 
 
 def plot2(what, name):
@@ -61,11 +66,15 @@ def table(list1):
 
 sizes = [*range(5, 12)]
 strengths = [3, 6, 10, 14]
-df_list = [pso_df, gen_df, per_df]
+df_list = [pso_df, gen_df, psoL_df, gen2_df, per_df]
 best_pso = pso_df.loc[pso_df['strength'] == 3]
 best_gen = gen_df.loc[gen_df['strength'] == 3]
+best_psoL = psoL_df.loc[gen_df['strength'] == 3]
+bestg2 = gen2_df.loc[gen_df['strength'] == 3]
 # plot('best_pred', df_list)
 # plot('mean_time', df_list)
-plot2(best_pso, "PSO")
-plot2(best_gen, "GEN")
-# table(df_list)
+# plot2(best_pso, "PSO")
+# plot2(best_gen, "GEN")
+plot2(best_psoL, "PSO_L")
+plot2(bestg2, "GEN2")
+table(df_list)

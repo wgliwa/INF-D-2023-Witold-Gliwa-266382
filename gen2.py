@@ -22,6 +22,18 @@ def run_gen(size, strength, times):
                               (1 - calc3d(np.append(x[i], x[j])))) - 2)
         return -sum
 
+    def crossover(parents, offspring_size, pygad):
+        offspring = []
+        idx = 0
+        while len(offspring) != offspring_size[0]:
+            parent1 = parents[idx % parents.shape[0], :].copy()
+            parent2 = parents[(idx + 1) % parents.shape[0], :].copy()
+            random_split_point = 3 * round(np.random.choice(range(offspring_size[1])) / 3)
+            parent1[random_split_point:] = parent2[random_split_point:]
+            offspring.append(parent1)
+            idx += 1
+        return np.array(offspring)
+
     gene_space = {'low': -2.0, 'high': 2.0}
     sol_per_pop = 150
     num_genes = size * 3
@@ -37,12 +49,12 @@ def run_gen(size, strength, times):
                                fitness_func=fitness_func,
                                sol_per_pop=sol_per_pop,
                                num_genes=num_genes,
-                               parent_selection_type="rws",
+                               parent_selection_type="tournament",
                                keep_parents=int(sol_per_pop / 10),
-                               crossover_type="scattered",
-                               mutation_type="swap",
+                               crossover_type=crossover,
+                               mutation_type="random",
                                mutation_percent_genes=20,
-                               crossover_probability=0.5)
+                               )
 
         ga_instance.run()
         end = time.time()
@@ -55,16 +67,10 @@ def run_gen(size, strength, times):
     return [size, strength, best_pred, np.mean(mean_times), np.min(mean_times), np.max(mean_times), best_solution]
 
 
-# n_particles = list(range(7, 12))
-# strengths = [3, 6, 10, 14]
-# for i in n_particles:
-#     for j in strengths:
-#         open('gen_results.txt', 'a').write(';'.join(str(i) for i in run_gen(i, j, 10)))
-#         open('gen_results.txt', 'a').write("\n")
 n_particles = list(range(5, 12))
 strengths = [3, 6, 10, 14]
 res = pd.DataFrame(columns=['size', 'strength', 'best_pred', 'mean_time', 'min_time', 'max_time', 'best_pos'])
 for i in n_particles:
     for j in strengths:
         res.loc[len(res)] = run_gen(i, j, 10)
-res.to_csv("gen_test.csv")
+res.to_csv("gen2.csv")

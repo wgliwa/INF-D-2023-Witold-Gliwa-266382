@@ -2,6 +2,7 @@ import time
 from math import e, pow
 
 import numpy as np
+import pandas as pd
 import pyswarms as ps
 
 
@@ -23,7 +24,7 @@ def run_pso(size, strength, times):
         j = [help2(x[i]) for i in range(n_particles)]
         return np.array(j)
 
-    options = {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+    options = {'c1': 0.5, 'c2': 0.3, 'w': 0.9, 'k': 3, 'p': 2}
     my_bounds = ([-2.0] * (size * 3), [2.0] * (size * 3))
     mean_times = []
     best_pred = 0.0
@@ -31,7 +32,7 @@ def run_pso(size, strength, times):
     for i in range(0, times):
         print(size, strength, i)
         start = time.time()
-        optimizer = ps.single.GlobalBestPSO(n_particles=150, dimensions=size * 3, options=options, bounds=my_bounds)
+        optimizer = ps.single.LocalBestPSO(n_particles=150, dimensions=size * 3, options=options, bounds=my_bounds)
         cost, pos = optimizer.optimize(f, iters=150, )
         end = time.time()
         mean_times.append(end - start)
@@ -44,7 +45,8 @@ def run_pso(size, strength, times):
 
 n_particles = list(range(5, 12))
 strengths = [3, 6, 10, 14]
+res = pd.DataFrame(columns=['size', 'strength', 'best_pred', 'mean_time', 'min_time', 'max_time', 'best_pos'])
 for i in n_particles:
     for j in strengths:
-        open('pso_results.txt', 'a').write(';'.join(str(i) for i in run_pso(i, j, 10)))
-        open('pso_results.txt', 'a').write("\n")
+        res.loc[len(res)] = run_pso(i, j, 10)
+res.to_csv("xd.csv")
