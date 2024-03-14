@@ -49,4 +49,4 @@ res = pd.DataFrame(columns=['size', 'strength', 'best_pred', 'mean_time', 'min_t
 for i in n_particles:
     for j in strengths:
         res.loc[len(res)] = run_pso(i, j, 10)
-res.to_csv("xd.csv")
+res.to_csv("results/xd.csv")

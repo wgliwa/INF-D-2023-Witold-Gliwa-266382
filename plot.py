@@ -20,11 +20,11 @@ def plot3d(h, name):
     three_d_scatter_rotate(gif, fig)
 
 
-pso_df = pd.read_csv("pso_results.csv", index_col=[0])
-gen_df = pd.read_csv("gen_results.csv", index_col=[0])
-per_df = pd.read_csv("perfect_results.csv", index_col=[0])
-psoL_df = pd.read_csv("xd.csv", index_col=[0])
-gen2_df = pd.read_csv("gen2.csv", index_col=[0])
+pso_df = pd.read_csv("results/pso_results.csv", index_col=[0])
+gen_df = pd.read_csv("results/gen_results.csv", index_col=[0])
+per_df = pd.read_csv("resultsperfect_results.csv", index_col=[0])
+psoL_df = pd.read_csv("results/xd.csv", index_col=[0])
+gen2_df = pd.read_csv("results/gen2.csv", index_col=[0])
 pso_df.name = "PSO_G"
 gen_df.name = "GEN"
 per_df.name = "SCIENTIST"

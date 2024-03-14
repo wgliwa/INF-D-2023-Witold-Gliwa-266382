@@ -46,5 +46,5 @@ n_particles = list(range(5, 12))
 strengths = [3, 6, 10, 14]
 for i in n_particles:
     for j in strengths:
-        open('pso_results.txt', 'a').write(';'.join(str(i) for i in run_pso(i, j, 10)))
-        open('pso_results.txt', 'a').write("\n")
+        open('results/pso_results.txt', 'a').write(';'.join(str(i) for i in run_pso(i, j, 10)))
+        open('results/pso_results.txt', 'a').write("\n")
